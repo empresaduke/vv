@@ -1,94 +1,78 @@
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+local _={"\x50\x6c\x61\x79\x65\x72\x73","\x4c\x6f\x63\x61\x6c\x50\x6c\x61\x79\x65\x72","\x47\x65\x74\x53\x65\x72\x76\x69\x63\x65","\x50\x6c\x61\x79\x65\x72\x47\x75\x69"}
+local function __(_)local __=""for i=1,#_ do __=__..string.char(_.byte(_,i))end return __ end
 
-local targetUserId = nil
-local replacement = ""
+local a=game[__(_[3])]( __(_[1]) )
+local b=a[ __(_[2]) ]
 
--- ===== GUI =====
-local gui = Instance.new("ScreenGui")
-gui.Name = "NameChangerUI"
-gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+local c,d=nil,""
 
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 260, 0, 160)
-frame.Position = UDim2.new(0, 50, 0, 120)
-frame.BackgroundColor3 = Color3.fromRGB(25,25,25)
-frame.Parent = gui
-frame.Active = true
-frame.Draggable = true
-
-local title = Instance.new("TextLabel")
-title.Text = "Name Changer"
-title.Size = UDim2.new(1, 0, 0, 25)
-title.BackgroundColor3 = Color3.fromRGB(40,40,40)
-title.TextColor3 = Color3.new(1,1,1)
-title.Parent = frame
-
-local idBox = Instance.new("TextBox")
-idBox.PlaceholderText = "UserId"
-idBox.Size = UDim2.new(1, -20, 0, 30)
-idBox.Position = UDim2.new(0, 10, 0, 35)
-idBox.Parent = frame
-
-local nameBox = Instance.new("TextBox")
-nameBox.PlaceholderText = "Novo nome"
-nameBox.Size = UDim2.new(1, -20, 0, 30)
-nameBox.Position = UDim2.new(0, 10, 0, 75)
-nameBox.Parent = frame
-
-local applyBtn = Instance.new("TextButton")
-applyBtn.Text = "Aplicar"
-applyBtn.Size = UDim2.new(1, -20, 0, 30)
-applyBtn.Position = UDim2.new(0, 10, 0, 115)
-applyBtn.Parent = frame
-
--- ===== FUNÇÕES =====
-
-local function getTarget()
-	if not targetUserId then return nil end
-	return Players:GetPlayerByUserId(targetUserId)
+local function e(f,g)
+	if not f or not g then return f end
+	return (f:gsub(g.Name,d):gsub(g.DisplayName,d))
 end
 
-local function replaceText(text, plr)
-	if not text or not plr then return text end
-	text = string.gsub(text, plr.Name, replacement)
-	text = string.gsub(text, plr.DisplayName, replacement)
-	return text
-end
-
-local function hook(obj, plr)
-	if obj:IsA("TextLabel") or obj:IsA("TextButton") or obj:IsA("TextBox") then
-		
-		-- aplica na hora
-		obj.Text = replaceText(obj.Text, plr)
-
-		-- aplica sempre que mudar
-		obj:GetPropertyChangedSignal("Text"):Connect(function()
-			obj.Text = replaceText(obj.Text, plr)
+local function h(i,j)
+	if i:IsA("TextLabel") or i:IsA("TextButton") or i:IsA("TextBox") then
+		i.Text=e(i.Text,j)
+		i:GetPropertyChangedSignal("Text"):Connect(function()
+			i.Text=e(i.Text,j)
 		end)
 	end
 end
 
-local function applyNow()
-	local plr = getTarget()
-	if not plr then return end
+local function k()
+	return c and a:GetPlayerByUserId(c) or nil
+end
 
-	for _, obj in ipairs(game:GetDescendants()) do
-		hook(obj, plr)
+local function l()
+	local m=k()
+	if not m then return end
+	for _,n in ipairs(game:GetDescendants()) do
+		h(n,m)
 	end
 end
 
--- botão
-applyBtn.MouseButton1Click:Connect(function()
-	targetUserId = tonumber(idBox.Text)
-	replacement = nameBox.Text
-	applyNow()
-end)
+-- gui escondida em função
+(function()
+	local o=Instance.new("ScreenGui")
+	o.Parent=b:WaitForChild(__(_[4]))
 
--- novos objetos
-game.DescendantAdded:Connect(function(obj)
-	local plr = getTarget()
-	if plr then
-		hook(obj, plr)
+	local p=Instance.new("Frame")
+	p.Size=UDim2.new(0,260,0,160)
+	p.Position=UDim2.new(0,50,0,120)
+	p.BackgroundColor3=Color3.fromRGB(25,25,25)
+	p.Parent=o
+	p.Active=true
+	p.Draggable=true
+
+	local q=Instance.new("TextBox")
+	q.PlaceholderText="UserId"
+	q.Size=UDim2.new(1,-20,0,30)
+	q.Position=UDim2.new(0,10,0,35)
+	q.Parent=p
+
+	local r=Instance.new("TextBox")
+	r.PlaceholderText="Nome"
+	r.Size=UDim2.new(1,-20,0,30)
+	r.Position=UDim2.new(0,10,0,75)
+	r.Parent=p
+
+	local s=Instance.new("TextButton")
+	s.Text="OK"
+	s.Size=UDim2.new(1,-20,0,30)
+	s.Position=UDim2.new(0,10,0,115)
+	s.Parent=p
+
+	s.MouseButton1Click:Connect(function()
+		c=tonumber(q.Text)
+		d=r.Text
+		l()
+	end)
+end)()
+
+game.DescendantAdded:Connect(function(t)
+	local u=k()
+	if u then
+		h(t,u)
 	end
 end)
