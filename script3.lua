@@ -3,8 +3,8 @@ repeat task.wait() until game:IsLoaded()
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
-local fakeDisplay = "sky"
-local fakeUser = "@skyfearless"
+local fakeDisplay = "gabb"
+local fakeUser = "@gabb4sv"
 
 local function replaceText(text)
 	if not text then return text end
