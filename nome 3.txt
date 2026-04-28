@@ -1,0 +1,42 @@
+repeat task.wait() until game:IsLoaded()
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local fakeDisplay = "gabb"
+local fakeUser = "@gabb4vs"
+
+local function replaceText(text)
+	if not text then return text end
+
+	-- protege username original
+	local originalUser = "@"..LocalPlayer.Name
+	local protected = text:gsub(originalUser, "§USER§")
+
+	-- troca display (sem afetar username)
+	protected = protected:gsub(LocalPlayer.DisplayName, fakeDisplay)
+
+	-- volta o username fake
+	protected = protected:gsub("§USER§", fakeUser)
+
+	return protected
+end
+
+local function hook(obj)
+	if obj:IsA("TextLabel") or obj:IsA("TextButton") or obj:IsA("TextBox") then
+		
+		obj.Text = replaceText(obj.Text)
+
+		obj:GetPropertyChangedSignal("Text"):Connect(function()
+			obj.Text = replaceText(obj.Text)
+		end)
+	end
+end
+
+for _, obj in ipairs(game:GetDescendants()) do
+	hook(obj)
+end
+
+game.DescendantAdded:Connect(function(obj)
+	hook(obj)
+end)
